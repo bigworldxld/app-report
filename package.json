@@ -12,7 +12,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"No tests configured\"",
-    "build": "mkdir -p build && cp -r frontend/* build/",
+    "build": "mkdir -p build && cp -r frontend/* build/ && mkdir -p build/report/static && cp frontend/report/static/* build/report/static/",
     "install-deps": "npm install"
   },
   "keywords": [],
