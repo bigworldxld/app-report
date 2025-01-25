@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>SELFPAGE 测试控制台</title>
+    <link href="/report/static/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .report-list {
+            margin-top: 30px;
+        }
+        .report-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .report-item:hover {
+            background-color: #f5f5f5;
+            transform: translateX(5px);
+        }
+        .report-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .report-stats {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .report-stats .stat-item {
+            text-align: center;
+        }
+        .report-stats .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .report-stats .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .current-time {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SELFPAGE 测试控制台</h1>
+            <p class="lead">自动化测试报告查看系统</p>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">测试报告列表</h3>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="输入关键字搜索报告...">
+            </div>
+            
+            <div class="report-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalReports">0</div>
+                    <div class="stat-label">报告总数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="todayReports">0</div>
+                    <div class="stat-label">今日新增</div>
+                </div>
+            </div>
+            
+            <div class="panel-body report-list" id="reportList">
+                <!-- 报告列表将通过 JavaScript 动态生成 -->
+            </div>
+        </div>
+        <a href="config" class="btn btn-info">查看配置信息</a>
+
+        <div class="footer text-center">
+            <p class="current-time">当前时间: <span id="currentTime"></span></p>
+        </div>
+
+    </div>
+
+    <script src="/report/static/jquery.min.js"></script>
+    <script src="/report/static/bootstrap.min.js"></script>
+    <script>
+        // 获取当前页面的路径
+        const currentPath = window.location.pathname;
+        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        
+        // 从接口获取报告列表
+        function fetchReports() {
+            fetch('/report')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const reports = data.data;
+                        updateReportStats(reports);
+                        renderReports(reports);
+                    } else {
+                        console.error('获取报告列表失败:', data.message);
+                        document.getElementById('reportList').innerHTML = 
+                            `<div class="no-results">获取报告列表失败: ${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('请求失败:', error);
+                    document.getElementById('reportList').innerHTML = 
+                        '<div class="no-results">获取报告列表失败，请稍后重试</div>';
+                });
+        }
+
+        function updateReportStats(reports) {
+            $('#totalReports').text(reports.length);
+            const today = new Date().toISOString().split('T')[0];
+            const todayReports = reports.filter(report => report.date === today).length;
+            $('#todayReports').text(todayReports);
+        }
+
+        function renderReports(reports) {
+            const $reportList = $('#reportList');
+            $reportList.empty();
+
+            if (reports.length === 0) {
+                $reportList.append('<div class="no-results">暂无测试报告</div>');
+                return;
+            }
+
+            // 按日期降序排序
+            reports.sort((a, b) => b.date.localeCompare(a.date));
+
+            reports.forEach(report => {
+                const reportPath = `report/${report.name}`;
+                const reportItem = $('<div>').addClass('report-item');
+                const row = $('<div>').addClass('row');
+
+                const colLeft = $('<div>').addClass('col-md-8');
+                const h4 = $('<h4>');
+                const link = $('<a>')
+                    .attr('href', reportPath)
+                    .attr('target', '_blank')
+                    .text(report.name.replace(/_/g, ' ').replace('.html', ''));
+
+                const colRight = $('<div>').addClass('col-md-4 text-right');
+                const dateSpan = $('<span>')
+                    .addClass('report-date')
+                    .text(report.date);
+
+                h4.append(link);
+                colLeft.append(h4);
+                colRight.append(dateSpan);
+                row.append(colLeft).append(colRight);
+                reportItem.append(row);
+                $reportList.append(reportItem);
+            });
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            fetch('/report')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const filteredReports = data.data.filter(report => 
+                            report.name.toLowerCase().includes(searchTerm)
+                        );
+                        renderReports(filteredReports);
+                    }
+                })
+                .catch(error => console.error('搜索失败:', error));
+        });
+
+        // 更新时间的函数
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // 初始化
+        $(document).ready(function() {
+            // 获取报告列表
+            fetchReports();
+            // 更新当前时间
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        });
+    </script>
+</body>
+</html> 

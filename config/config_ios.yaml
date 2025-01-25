@@ -1,0 +1,56 @@
+title: 35735和1599回归测试
+desc: 端内UIDIFF
+report_name: _report.html
+report_relative_dir: report
+report_dir: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/
+tester: xld
+#报告图片文件名，与生成html存放路径有关
+report_imges_relatve_dir: images_ios
+#动态截图路径
+dynamic_screenshot_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/screenshot.png
+#获取报告图片文件夹
+getImage_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/images_ios
+#运行前删除报告图片文件夹下所有图片
+del_Image_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/images_ios
+#真机高宽
+getImage:
+  height: 450
+  width: 200
+#sender_mail: 2117376396@qq.com
+#reciever_mail: 2117376396@qq.com
+thread_count: 1
+database:
+  host: localhost
+  user: root
+  passwd: root
+  database: finance
+  charset: utf8
+capabilities:
+  platformName: iOS
+  automationName: XCUITest
+  #deviceName: iPhone 12
+  deviceName: iPhonese
+#  deviceName: iPhone 8
+  #bundleId: com.baidu.BaiduMobileEnterpriseA
+  bundleId: com.baidu.BaiduMobile
+  #udid: 00008101-000A1C6A11F2001E  # iphone 12
+  udid: 00008110-000611212207801E  # iphone se
+#  udid: 4d36408359a27a24707f85d0f96cdcdd1e10856e    # iphone 8
+  # unicodeKeyboard=False,  # 使用自带输入法，输入中文时填写True
+  # resetKeyboard=True,  # 执行完程序恢复原来输入法
+  autoAcceptAlerts: True # 自动接受弹窗
+  noReset: True  # 不要重置App
+#参数驱动文件路径
+data:
+  url_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/data/output_topquery_35735.txt
+#  url_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/data/url_test.txt
+#操作步骤
+operation:
+  step1: 前卡
+  desc1: 百看前卡
+  step2: 落地页
+  desc2: 百看自建页
+  step3: 相关推荐
+  desc3: b区
+  step4: 沉浸页
+  desc4: 沉浸页a区

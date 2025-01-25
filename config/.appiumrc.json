@@ -1,0 +1,5 @@
+{
+  "server": {
+    "use-plugins": ["images", "ocr"]
+  }
+}

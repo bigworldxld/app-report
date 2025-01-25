@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Appium 服务器控制</title>
+    <link href="report/static/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+        #logArea {
+            height: 300px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .status-running {
+            color: #28a745;
+        }
+        .status-stopped {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Appium 服务器控制面板</h2>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <button id="toggleButton" class="btn btn-primary">
+                    启动 Appium 服务器
+                </button>
+                <span id="statusText" class="ml-3 status-stopped">
+                    当前状态：已停止
+                </span>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div id="logArea">
+                    <div class="log-entry">等待操作...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="report/static/jquery.min.js"></script>
+    <script>
+        let isRunning = false;
+        let logPollingInterval;
+
+        function addLog(message) {
+            const logEntry = $('<div class="log-entry"></div>').text(
+                `[${new Date().toLocaleTimeString()}] ${message}`
+            );
+            $('#logArea').append(logEntry);
+            $('#logArea').scrollTop($('#logArea')[0].scrollHeight);
+        }
+
+        function updateStatus(running) {
+            isRunning = running;
+            const $button = $('#toggleButton');
+            const $status = $('#statusText');
+            
+            if (running) {
+                $button.text('停止 Appium 服务器');
+                $button.removeClass('btn-primary').addClass('btn-danger');
+                $status.text('当前状态：运行中');
+                $status.removeClass('status-stopped').addClass('status-running');
+            } else {
+                $button.text('启动 Appium 服务器');
+                $button.removeClass('btn-danger').addClass('btn-primary');
+                $status.text('当前状态：已停止');
+                $status.removeClass('status-running').addClass('status-stopped');
+            }
+        }
+
+        $('#toggleButton').click(function() {
+            const action = isRunning ? 'stop' : 'start';
+            
+            $.get(`/api/appium/${action}`)
+                .done(function(response) {
+                    if (response.status === 'success') {
+                        updateStatus(!isRunning);
+                        addLog(response.message);
+                    } else {
+                        addLog(`错误: ${response.message}`);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    addLog(`请求失败: ${textStatus}`);
+                });
+        });
+    </script>
+</body>
+</html>

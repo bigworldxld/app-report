@@ -1,0 +1,76 @@
+title: 相关推荐回归测试
+desc: 端内UIDIFF
+report_name: _report.html
+report_relative_dir: report
+report_dir: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report
+tester: xld
+# 报告图片生成的文件夹名
+report_imges_relatve_dir: images2
+#report_imges_relatve_dir: ${IMAGES}
+# 报告图片存放的文件夹路径
+getImage_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/images2
+#getImage_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/${IMAGES}
+long_screenshot_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/long_images
+#运行前删除报告图片文件夹下所有图片
+del_Image_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/images2
+#del_Image_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/${IMAGES}
+# 元素图片查找路径
+#dynamic_screenshot_path: ../screenshot.png
+el_image_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/el_image/threejia1.jpg
+# 真机截图高宽
+getImage:
+  height: 450
+  width: 200
+
+#sender_mail: 2117376396@qq.com
+#reciever_mail: 2117376396@qq.com
+thread_count: 1
+database:
+  host: localhost
+  user: root
+  passwd: root
+  database: finance
+  charset: utf8
+capabilities:
+  platformName: Android
+  automationName: UiAutomator2
+  deviceName: AWMCUT1218034034  #华为
+  appPackage: com.baidu.searchbox
+  appActivity: com.baidu.searchbox/.MainActivity
+  # unicodeKeyboard=False,  # 使用自带输入法，输入中文时填写True
+  # resetKeyboard=True,  # 执行完程序恢复原来输入法
+  autoAcceptAlerts: True # 自动接受弹窗
+  noReset: True  # 不要重置App
+  ocrLanguage: chi_sim+eng  # 支持中文简体和英文
+  ocrContrast: 0.7     # 增加对比度以提高识别率
+  ocrInvertColors: False  # 如果是深色模式需要设为True
+  ocrValidChars: "" # 不限制字符
+#数据驱动文件路径
+data:
+  url_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/data/url.txt
+#  url_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/data/url_test.txt
+#  url_path: /Users/v_xulindu/PycharmProjects/mytest/selfpage/data/url_test_diff.txt
+#操作步骤
+operation:
+  step1: 步骤1
+  desc1: 自建页a区
+  step2: 步骤2
+  desc2: 自建页b区
+  step3: 步骤3
+  desc3: 相关推荐落地页
+  step4: 步骤4
+  desc4: 相关推荐b区
+  step5: 步骤5
+  desc5: 相关推荐落地页
+col: 5
+#operation:
+#  step1: 步骤1
+#  desc1: 百看前卡
+#  step2: 步骤2
+#  desc2: 百看自建页
+#  step3: 步骤3
+#  desc3: 落地页相关推荐
+#  step4: 步骤4
+#  desc4: 相关推荐沉浸页a区
+#  step5: 步骤5
+#  desc5: 相关推荐沉浸页b区

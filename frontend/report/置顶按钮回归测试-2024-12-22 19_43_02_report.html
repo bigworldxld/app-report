@@ -1,0 +1,884 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>置顶按钮回归测试</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.2"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="/report/static/bootstrap.min.css" rel="stylesheet">
+    <script src="/report/static/jquery.min.js"></script>
+    <script src="/report/static/bootstrap.min.js"></script>
+    <!-- <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script> -->
+    <!-- <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script> -->
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 80%; }
+table       { font-size: 100%; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { width: 150px;word-break: break-all; }
+
+</style>
+
+    <style>
+        /* 分页控制样式 */
+        .pagination-controls {
+            margin: 20px 0;
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .pagination-controls select {
+            padding: 5px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .pagination-controls button {
+            padding: 5px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+        }
+        .pagination-controls button:hover {
+            background: #e9ecef;
+        }
+        .pagination-info {
+            margin: 0 15px;
+            color: #666;
+        }
+        .hide-content {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+4:Error  
+*/
+function showCase(level) {
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2 || level ==4) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].textContent="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].textContent="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&');
+    s = s.replace(/</g,'<');
+    s = s.replace(/>/g,'>');
+    return s;
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">置顶按钮回归测试</h4>
+<p class='attribute'><strong>测试人员 : </strong> xld</p>
+<p class='attribute'><strong>真机类型 : </strong> Android AWMCUT1218034034</p>
+<p class='attribute'><strong>开始时间 : </strong> 2025-01-14 12:40:48</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:04:23.455520</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 13 个用例，通过 13, 通过率=100.00%</p>
+
+<p class='description'>端内UIDIFF</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 100.00% }</a>
+<a class="btn btn-warning" href='javascript:showCase(4)'>错误{ 0 }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 0 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 13 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 13 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align="left" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<col align="right" />
+<!-- <col align='left' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+<!-- <col align='right' /> -->
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+    <td>步骤1</td>
+<td>步骤2</td>
+<td>步骤3</td>
+<td>步骤4</td>
+</tr>
+
+<tr class='passClass warning'>
+    <td>自建页a区</td>
+    <td class="text-center">13</td>
+    <td class="text-center">13</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center"><a href="javascript:showClassDetail('c1',13)" class="detail" id='c1'>详细</a></td>
+    <td class="text-center">自建页a区</td><td class="text-center">自建页b区</td><td class="text-center">相关推荐落地页上滑出现置顶按钮</td><td class="text-center">自建页a区</td>
+</tr>
+
+    <tr id='pt1_1' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_01_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_vc_15593997795125649871_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_1' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_1'>通过</button>
+        <div id='div_pt1_1' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_1: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/vc_15593997795125649871?sid=638122
+screenshot0: 20250114_12.41.05 0.png
+screenshot1: 20250114_12.41.11 1.png
+screenshot2: 20250114_12.41.13 2.png
+screenshot3: 20250114_12.41.16 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.050.png" target="_blank">
+                                <img src="./images1/20250114_12.41.050.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.111.png" target="_blank">
+                                <img src="./images1/20250114_12.41.111.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.132.png" target="_blank">
+                                <img src="./images1/20250114_12.41.132.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.163.png" target="_blank">
+                                <img src="./images1/20250114_12.41.163.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_2' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_02_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_vc_5140376617089124784_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_2' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_2'>通过</button>
+        <div id='div_pt1_2' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_2: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/vc_5140376617089124784?sid=638122
+screenshot0: 20250114_12.41.26 0.png
+screenshot1: 20250114_12.41.32 1.png
+screenshot2: 20250114_12.41.33 2.png
+screenshot3: 20250114_12.41.36 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.260.png" target="_blank">
+                                <img src="./images1/20250114_12.41.260.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.321.png" target="_blank">
+                                <img src="./images1/20250114_12.41.321.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.332.png" target="_blank">
+                                <img src="./images1/20250114_12.41.332.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.363.png" target="_blank">
+                                <img src="./images1/20250114_12.41.363.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_3' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_03_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_6099388224688340859_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_3' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_3'>通过</button>
+        <div id='div_pt1_3' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_3: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_6099388224688340859?sid=638122
+screenshot0: 20250114_12.41.46 0.png
+screenshot1: 20250114_12.41.52 1.png
+screenshot2: 20250114_12.41.53 2.png
+screenshot3: 20250114_12.41.57 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.460.png" target="_blank">
+                                <img src="./images1/20250114_12.41.460.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.521.png" target="_blank">
+                                <img src="./images1/20250114_12.41.521.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.532.png" target="_blank">
+                                <img src="./images1/20250114_12.41.532.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.41.573.png" target="_blank">
+                                <img src="./images1/20250114_12.41.573.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_4' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_04_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_5572183810823841301_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_4' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_4'>通过</button>
+        <div id='div_pt1_4' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_4: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_5572183810823841301?sid=638122
+screenshot0: 20250114_12.42.07 0.png
+screenshot1: 20250114_12.42.13 1.png
+screenshot2: 20250114_12.42.14 2.png
+screenshot3: 20250114_12.42.17 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.070.png" target="_blank">
+                                <img src="./images1/20250114_12.42.070.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.131.png" target="_blank">
+                                <img src="./images1/20250114_12.42.131.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.142.png" target="_blank">
+                                <img src="./images1/20250114_12.42.142.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.173.png" target="_blank">
+                                <img src="./images1/20250114_12.42.173.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_5' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_05_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_5578302816320374135_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_5' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_5'>通过</button>
+        <div id='div_pt1_5' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_5: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_5578302816320374135?sid=638122
+screenshot0: 20250114_12.42.28 0.png
+screenshot1: 20250114_12.42.34 1.png
+screenshot2: 20250114_12.42.35 2.png
+screenshot3: 20250114_12.42.38 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.280.png" target="_blank">
+                                <img src="./images1/20250114_12.42.280.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.341.png" target="_blank">
+                                <img src="./images1/20250114_12.42.341.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.352.png" target="_blank">
+                                <img src="./images1/20250114_12.42.352.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.383.png" target="_blank">
+                                <img src="./images1/20250114_12.42.383.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_6' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_06_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_2536217315853441391_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_6' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_6'>通过</button>
+        <div id='div_pt1_6' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_6: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_2536217315853441391?sid=638122
+screenshot0: 20250114_12.42.48 0.png
+screenshot1: 20250114_12.42.54 1.png
+screenshot2: 20250114_12.42.55 2.png
+screenshot3: 20250114_12.42.58 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.480.png" target="_blank">
+                                <img src="./images1/20250114_12.42.480.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.541.png" target="_blank">
+                                <img src="./images1/20250114_12.42.541.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.552.png" target="_blank">
+                                <img src="./images1/20250114_12.42.552.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.42.583.png" target="_blank">
+                                <img src="./images1/20250114_12.42.583.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_7' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_07_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_5359664143139412000_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_7' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_7'>通过</button>
+        <div id='div_pt1_7' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_7: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_5359664143139412000?sid=638122
+screenshot0: 20250114_12.43.08 0.png
+screenshot1: 20250114_12.43.14 1.png
+screenshot2: 20250114_12.43.16 2.png
+screenshot3: 20250114_12.43.19 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.080.png" target="_blank">
+                                <img src="./images1/20250114_12.43.080.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.141.png" target="_blank">
+                                <img src="./images1/20250114_12.43.141.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.162.png" target="_blank">
+                                <img src="./images1/20250114_12.43.162.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.193.png" target="_blank">
+                                <img src="./images1/20250114_12.43.193.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_8' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_08_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_8649283480748919826_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_8' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_8'>通过</button>
+        <div id='div_pt1_8' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_8: 运行发生异常，忽略本次运行
+screenshot0: 20250114_12.43.22 0.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.220.png" target="_blank">
+                                <img src="./images1/20250114_12.43.220.png" height="450" width="200"/>
+                            </a>
+                        </td><td align="right"></td><td align="right"></td><td align="right"></td>
+    </tr>
+    
+    <tr id='pt1_9' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_09_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_9489114299121162627_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_9' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_9'>通过</button>
+        <div id='div_pt1_9' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_9: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_9489114299121162627?sid=638122
+screenshot0: 20250114_12.43.34 0.png
+screenshot1: 20250114_12.43.40 1.png
+screenshot2: 20250114_12.43.41 2.png
+screenshot3: 20250114_12.43.44 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.340.png" target="_blank">
+                                <img src="./images1/20250114_12.43.340.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.401.png" target="_blank">
+                                <img src="./images1/20250114_12.43.401.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.412.png" target="_blank">
+                                <img src="./images1/20250114_12.43.412.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.443.png" target="_blank">
+                                <img src="./images1/20250114_12.43.443.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_10' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_10_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_ar_8381125062730944864_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_10' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_10'>通过</button>
+        <div id='div_pt1_10' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_10: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/ar_8381125062730944864?sid=638122
+screenshot0: 20250114_12.43.55 0.png
+screenshot1: 20250114_12.44.01 1.png
+screenshot2: 20250114_12.44.02 2.png
+screenshot3: 20250114_12.44.05 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.43.550.png" target="_blank">
+                                <img src="./images1/20250114_12.43.550.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.011.png" target="_blank">
+                                <img src="./images1/20250114_12.44.011.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.022.png" target="_blank">
+                                <img src="./images1/20250114_12.44.022.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.053.png" target="_blank">
+                                <img src="./images1/20250114_12.44.053.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_11' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_11_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_sv_9277792248846029564_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_11' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_11'>通过</button>
+        <div id='div_pt1_11' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_11: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/sv_9277792248846029564?sid=638122
+screenshot0: 20250114_12.44.16 0.png
+screenshot1: 20250114_12.44.22 1.png
+screenshot2: 20250114_12.44.23 2.png
+screenshot3: 20250114_12.44.26 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.160.png" target="_blank">
+                                <img src="./images1/20250114_12.44.160.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.221.png" target="_blank">
+                                <img src="./images1/20250114_12.44.221.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.232.png" target="_blank">
+                                <img src="./images1/20250114_12.44.232.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.263.png" target="_blank">
+                                <img src="./images1/20250114_12.44.263.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_12' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_12_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_sv_9955081679327171501_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_12' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_12'>通过</button>
+        <div id='div_pt1_12' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_12: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/sv_9955081679327171501?sid=638122
+screenshot0: 20250114_12.44.37 0.png
+screenshot1: 20250114_12.44.44 1.png
+screenshot2: 20250114_12.44.45 2.png
+screenshot3: 20250114_12.44.49 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.370.png" target="_blank">
+                                <img src="./images1/20250114_12.44.370.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.441.png" target="_blank">
+                                <img src="./images1/20250114_12.44.441.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.452.png" target="_blank">
+                                <img src="./images1/20250114_12.44.452.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.493.png" target="_blank">
+                                <img src="./images1/20250114_12.44.493.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+    <tr id='pt1_13' class='hiddenRow'>
+        <td class='passCase' width='100px'><div class='testcase'>test_clk_topback_android_13_http___yq01_ps_beehive_agent247127_yq01_baidu_com_8330_m_detail_sv_5150417485323255215_sid_638122</div></td>
+        <td colspan='5' align='left' width='400px'> <!--print 输出框位置-->
+        <!-- 默认展开错误信息 -Findyou -->
+        <button id='btn_pt1_13' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_13'>通过</button>
+        <div id='div_pt1_13' class="collapse in">
+        <pre style="overflow-y:scroll; overflow-x:hidden;height:400px; width:400px; margin:auto; border:1px solid #e1e1e1;">
+        
+pt1_13: 开始执行链接http://yq01-ps-beehive-agent247127.yq01.baidu.com:8330/m/detail/sv_5150417485323255215?sid=638122
+screenshot0: 20250114_12.44.58 0.png
+screenshot1: 20250114_12.45.05 1.png
+screenshot2: 20250114_12.45.06 2.png
+screenshot3: 20250114_12.45.09 3.png
+
+
+        </pre>
+        </div>
+        </td>
+        
+                        <td align="right">
+                            <a href="./images1/20250114_12.44.580.png" target="_blank">
+                                <img src="./images1/20250114_12.44.580.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.45.051.png" target="_blank">
+                                <img src="./images1/20250114_12.45.051.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.45.062.png" target="_blank">
+                                <img src="./images1/20250114_12.45.062.png" height="450" width="200"/>
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="./images1/20250114_12.45.093.png" target="_blank">
+                                <img src="./images1/20250114_12.45.093.png" height="450" width="200"/>
+                            </a>
+                        </td>
+    </tr>
+    
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>13</td>
+    <td>13</td>
+    <td>0</td>
+    <td>0</td>
+    <td>通过率：100.00%</td>
+    <td><a href="" target="_blank"></a></td>
+<td><a href="" target="_blank"></a></td>
+<td><a href="" target="_blank"></a></td>
+<td><a href="" target="_blank"></a></td>
+</tr>
+</table>
+
+
+<div id='ending'> </div>
+<style>
+    .back-to-top, .back-to-bottom {
+        position: fixed;
+        right: 50px;
+        width: 40px;
+        height: 40px;
+        background-color: #fff;
+        border: 2px solid #666;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 9999;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    
+    .back-to-top {
+        bottom: 30px;
+    }
+    
+    .back-to-bottom {
+        top: 30px;
+    }
+    
+    .back-to-top::after, .back-to-bottom::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        border-top: 3px solid #666;
+        border-right: 3px solid #666;
+    }
+    
+    .back-to-top::after {
+        transform: translateY(25%) rotate(-45deg);
+    }
+    
+    .back-to-bottom::after {
+        transform: translateY(-25%) rotate(135deg);
+    }
+    
+    .back-to-top:hover, .back-to-bottom:hover {
+        background-color: #f0f0f0;
+        border-color: #333;
+    }
+    
+    .back-to-top:hover::after, .back-to-bottom:hover::after {
+        border-color: #333;
+    }
+</style>
+
+<a href="#" class="back-to-top" title="返回顶部"></a>
+<a href="#ending" class="back-to-bottom" title="返回底部"></a>
+
+
+<!-- 添加分页控制 -->
+<div class="pagination-controls">
+    <select id="pageSize">
+        <option value="10">10条/页</option>
+        <option value="20">20条/页</option>
+        <option value="50">50条/页</option>
+        <option value="100">100条/页</option>
+    </select>
+    <button onclick="prevPage()">上一页</button>
+    <span class="pagination-info">
+        第<span id="currentPage">1</span>页 / 共<span id="totalPages">1</span>页
+    </span>
+    <button onclick="nextPage()">下一页</button>
+</div>
+
+    <script>
+        let currentPage = 1;
+        let pageSize = 10;
+        
+        function updateTable() {
+            // 获取需要分页的行，排除表头和汇总行
+            const rows = Array.from(document.querySelectorAll('#result_table tr')).filter(row => {
+                return !row.id.includes('header_row') && 
+                       !row.id.includes('total_row') && 
+                       !row.classList.contains('passClass');
+            });
+            
+            // 隐藏分类行的第一个td内容
+            document.querySelectorAll('.passClass td:first-child').forEach(td => {
+                td.classList.add('hide-content');
+            });
+            
+            const totalPages = Math.ceil(rows.length / pageSize);
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('currentPage').textContent = currentPage;
+            
+            rows.forEach((row, index) => {
+                if (index >= (currentPage - 1) * pageSize && index < currentPage * pageSize) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            // 更新表格后滚动到顶部
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'  // 平滑滚动效果
+            });
+        }
+        
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        }
+        
+        function nextPage() {
+            const rows = document.querySelectorAll('#result_table tr:not(#header_row):not(#total_row):not(.passClass)');
+            const totalPages = Math.ceil(rows.length / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateTable();
+            }
+        }
+        
+        document.getElementById('pageSize').addEventListener('change', function() {
+            pageSize = parseInt(this.value);
+            currentPage = 1;
+            updateTable();
+        });
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTable();
+        });
+    </script>
+</body>
+</html>
