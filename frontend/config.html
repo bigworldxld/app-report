@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Appium 服务器控制</title>
-    <link href="./report/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/app-report/report/static/bootstrap.min.css" rel="stylesheet">
     <style>
         .container {
             margin-top: 50px;
@@ -52,10 +52,11 @@
         </div>
     </div>
 
-    <script src="./report/static/jquery.min.js"></script>
+    <script src="/app-report/report/static/jquery.min.js"></script>
     <script>
         let isRunning = false;
         let logPollingInterval;
+        const basePath = '/app-report';
 
         function addLog(message) {
             const logEntry = $('<div class="log-entry"></div>').text(
@@ -86,7 +87,7 @@
         $('#toggleButton').click(function() {
             const action = isRunning ? 'stop' : 'start';
             
-            $.get(`/api/appium/${action}`)
+            $.get(`${basePath}/api/appium/${action}`)
                 .done(function(response) {
                     if (response.status === 'success') {
                         updateStatus(!isRunning);

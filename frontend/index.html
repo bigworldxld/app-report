@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>SELFPAGE 测试控制台</title>
-    <link href="./report/static/bootstrap.min.css" rel="stylesheet">
+    <link href="./app-report/report/static/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f5f7fa;
@@ -133,16 +133,17 @@
 
     </div>
 
-    <script src="./report/static/jquery.min.js"></script>
-    <script src="./report/static/bootstrap.min.js"></script>
+    <script src="./app-report/report/static/jquery.min.js"></script>
+    <script src="./app-report/report/static/bootstrap.min.js"></script>
     <script>
         // 获取当前页面的路径
-        const currentPath = window.location.pathname;
-        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        const basePath = '/app-report';
+        // const currentPath = window.location.pathname;
+        // const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
         
         // 从接口获取报告列表
         function fetchReports() {
-            fetch('/report')
+            fetch(`${basePath}/report`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.code === 200) {
@@ -182,7 +183,7 @@
             reports.sort((a, b) => b.date.localeCompare(a.date));
 
             reports.forEach(report => {
-                const reportPath = `report/${report.name}`;
+                const reportPath = `${basePath}/report/${report.name}`;
                 const reportItem = $('<div>').addClass('report-item');
                 const row = $('<div>').addClass('row');
 
@@ -210,7 +211,7 @@
         // 搜索功能
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            fetch('/report')
+            fetch(`${basePath}/report`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.code === 200) {

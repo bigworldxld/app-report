@@ -6,6 +6,7 @@ var path = require('path');
 var os = require('os');
 var { spawn, exec } = require('child_process');
 var net = require('net');
+const basePath = '/app-report';  // GitHub Pages 项目名称
 
 // 存储已添加的静态资源路径
 let addedStaticPaths = new Set();
@@ -41,13 +42,13 @@ function initializeStaticFolders() {
 
         // 添加基础静态资源路由（只添加一次）
         if (!addedStaticPaths.has('static')) {
-            app.use('/report/static', express.static(path.join(__dirname, 'frontend/report/static')));
+            app.use(`${basePath}/report/static`, express.static(path.join(__dirname, 'frontend/report/static')));
             addedStaticPaths.add('static');
         }
 
         // 添加所有 images 前缀的文件夹作为静态资源
         imagesFolders.forEach(folder => {
-            const routePath = `/report/${folder}`;
+            const routePath = `${basePath}/report/${folder}`;
             // 检查是否已经添加过该路径
             if (!addedStaticPaths.has(routePath)) {
                 const folderPath = path.join(__dirname, 'frontend/report', folder);
@@ -77,7 +78,7 @@ app.get('/config', function (req, res) {
 })
 
 // 获取所有报告文件列表
-app.get('/report', function (req, res) {
+app.get(`${basePath}/report`, function (req, res) {
   const reportDir = path.join(__dirname, 'frontend/report');
   
   fs.readdir(reportDir, (err, files) => {
@@ -111,7 +112,7 @@ app.get('/report', function (req, res) {
 });
 
 // 直接访问报告文件
-app.get('/report/:filename', function (req, res) {
+app.get(`${basePath}/report/:filename`, function (req, res) {
   const filename = req.params.filename;
   const reportPath = path.join(__dirname, 'frontend/report', filename);
 
@@ -178,7 +179,7 @@ function killAppiumProcess() {
 }
 
 // 启动 Appium 服务器
-app.get('/api/appium/start', async function (req, res) {
+app.get(`${basePath}/api/appium/start`, async function (req, res) {
     try {
         // 检查端口占用
         const isPortBusy = await checkPort(4723);
@@ -220,7 +221,7 @@ app.get('/api/appium/start', async function (req, res) {
 });
 
 // 停止 Appium 服务器
-app.get('/api/appium/stop', async function (req, res) {
+app.get(`${basePath}/api/appium/stop`, async function (req, res) {
     try {
         if (appiumProcess) {
             appiumProcess.kill();
