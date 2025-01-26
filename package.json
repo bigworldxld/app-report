@@ -10,9 +10,9 @@
   "main": "app.js",
   "devDependencies": {},
   "scripts": {
-    "start": "node app.js",
+    "start": "node scripts/generate-report-list.js && node app.js",
     "test": "echo \"No tests configured\"",
-    "build": "mkdir -p build/frontend && cp -r frontend/* build/frontend/ && mkdir -p build/frontend/report/static && cp frontend/report/static/* build/frontend/report/static/",
+    "build": "mkdir -p build/frontend && cp -r frontend/* build/frontend/ && mkdir -p build/frontend/report/static && cp frontend/report/static/* build/frontend/report/static/ && node scripts/generate-report-list.js",
     "install-deps": "npm install"
   },
   "keywords": [],

@@ -141,9 +141,9 @@
         // const currentPath = window.location.pathname;
         // const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
         
-        // 从接口获取报告列表
+        // 从静态JSON文件获取报告列表
         function fetchReports() {
-            fetch(`${basePath}/report`)
+            fetch(`${basePath}/report/report-list.json`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.code === 200) {
@@ -211,7 +211,7 @@
         // 搜索功能
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            fetch(`${basePath}/report`)
+            fetch(`${basePath}/report/report-list.json`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.code === 200) {

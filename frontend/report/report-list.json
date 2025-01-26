@@ -1,0 +1,21 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": [
+    {
+      "name": "置顶按钮回归测试-2024-12-22 19_43_02_report.html",
+      "date": "2024-12-22",
+      "path": "/app-report/report/置顶按钮回归测试-2024-12-22 19_43_02_report.html"
+    },
+    {
+      "name": "置顶按钮回归测试-2025-01-22 19_43_02_report.html",
+      "date": "2025-01-22",
+      "path": "/app-report/report/置顶按钮回归测试-2025-01-22 19_43_02_report.html"
+    },
+    {
+      "name": "置顶按钮回归测试-2025-01-25 19_43_02_report.html",
+      "date": "2025-01-25",
+      "path": "/app-report/report/置顶按钮回归测试-2025-01-25 19_43_02_report.html"
+    }
+  ]
+}
