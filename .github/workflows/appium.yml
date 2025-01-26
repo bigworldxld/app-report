@@ -24,18 +24,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Cache Android SDK
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            /usr/local/lib/node_modules
-            /usr/local/lib/android/sdk
-            ~/.android
-          key: ${{ runner.os }}-node-android-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-android-
-
       # 安装和启动 ngrok
       - name: Setup ngrok
         if: github.event.inputs.action == 'start'
@@ -84,13 +72,11 @@ jobs:
       - name: Start Appium Server
         if: github.event.inputs.action == 'start'
         run: |
-          if ! command -v appium &> /dev/null; then
-            echo "Installing Appium and dependencies..."
-            npm install -g appium@next
-            appium driver install uiautomator2
-            appium plugin install images
-            appium plugin install --source=npm appium-ocr-plugin
-          fi
+          # 安装 Appium 和依赖
+          npm install -g appium@next
+          appium driver install uiautomator2
+          appium plugin install images
+          appium plugin install --source=npm appium-ocr-plugin
 
           echo "Starting Appium server..."
           nohup appium --allow-cors --address 0.0.0.0 --config ./config/.appiumrc.json > appium.log 2>&1 &
@@ -99,7 +85,7 @@ jobs:
           if pgrep -f appium > /dev/null; then
             echo "Appium server started successfully"
             
-            # 启动 ngrok HTTP 隧道（使用配置文件中的设置）
+            # 启动 ngrok HTTP 隧道
             echo "Starting ngrok tunnel..."
             nohup ngrok start appium > ngrok.log 2>&1 &
             sleep 10  # 给 ngrok 更多启动时间

@@ -79,39 +79,7 @@
                         action: action
                     }
                 })
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response;
             });
-        }
-
-        async function getServerStatus() {
-            try {
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/artifacts`);
-                const data = await response.json();
-                
-                // 查找最新的状态文件
-                const statusArtifact = data.artifacts.find(a => a.name === 'server-status');
-                if (statusArtifact) {
-                    const statusResponse = await fetch(statusArtifact.archive_download_url, {
-                        headers: {
-                            'Authorization': `token ${GITHUB_TOKEN}`
-                        }
-                    });
-                    const statusData = await statusResponse.json();
-                    
-                    addLog(`服务器状态: ${statusData.status}`);
-                    if (statusData.ngrok_url) {
-                        addLog(`服务器地址: ${statusData.ngrok_url}`);
-                        addLog('请使用此地址连接 Appium 服务器');
-                    }
-                    addLog(`最后更新时间: ${new Date(statusData.timestamp).toLocaleString()}`);
-                }
-            } catch (error) {
-                addLog(`获取服务器状态失败: ${error.message}`);
-            }
         }
 
         $('#startButton').click(async function() {
@@ -120,9 +88,6 @@
                 await triggerWorkflow('start');
                 addLog('已触发启动工作流，请等待几分钟...');
                 addLog(`查看运行状态: https://github.com/${REPO_OWNER}/${REPO_NAME}/actions`);
-                
-                // 等待一段时间后检查状态
-                setTimeout(getServerStatus, 30000);
             } catch (error) {
                 addLog(`错误: ${error.message}`);
                 if (error.message.includes('401')) {
@@ -136,17 +101,9 @@
                 addLog('正在停止 Appium 服务器...');
                 await triggerWorkflow('stop');
                 addLog('已触发停止工作流，请等待几分钟...');
-                
-                // 等待一段时间后检查状态
-                setTimeout(getServerStatus, 30000);
             } catch (error) {
                 addLog(`错误: ${error.message}`);
             }
-        });
-
-        // 页面加载时获取当前状态
-        $(document).ready(function() {
-            getServerStatus();
         });
     </script>
 </body>
