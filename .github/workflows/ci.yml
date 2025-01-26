@@ -112,7 +112,11 @@ jobs:
       run: npm test
 
     - name: Build project
+      env:
+        APPIUM_CONTROL_TOKEN: ${{ secrets.APPIUM_CONTROL_TOKEN }}
       run: |
+        # 替换 token 占位符
+        sed -i "s|{{ APPIUM_CONTROL_TOKEN }}|${APPIUM_CONTROL_TOKEN}|g" frontend/config.html
         npm run build
         ls -la build/frontend/report/
 

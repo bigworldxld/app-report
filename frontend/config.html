@@ -50,7 +50,8 @@
 
     <script src="/app-report/report/static/jquery.min.js"></script>
     <script>
-        const GITHUB_TOKEN = 'XLD_TOKEN'; // 需要替换为实际的 token
+        // 从环境变量中获取 token
+        const GITHUB_TOKEN = '{{ APPIUM_CONTROL_TOKEN }}'; // 这里会在构建时被替换
         const REPO_OWNER = 'bigworldxld';
         const REPO_NAME = 'app-report';
 
@@ -78,6 +79,11 @@
                         action: action
                     }
                 })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response;
             });
         }
 
@@ -86,8 +92,12 @@
                 addLog('正在启动 Appium 服务器...');
                 await triggerWorkflow('start');
                 addLog('已触发启动工作流，请等待几分钟...');
+                addLog(`查看运行状态: https://github.com/${REPO_OWNER}/${REPO_NAME}/actions`);
             } catch (error) {
                 addLog(`错误: ${error.message}`);
+                if (error.message.includes('401')) {
+                    addLog('授权失败：请确保 GitHub Token 配置正确');
+                }
             }
         });
 

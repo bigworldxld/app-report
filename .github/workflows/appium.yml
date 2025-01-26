@@ -14,6 +14,9 @@ on:
 jobs:
   control-appium:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -41,6 +44,8 @@ jobs:
 
       - name: Start Appium Server
         if: github.event.inputs.action == 'start'
+        env:
+          GITHUB_TOKEN: ${{ secrets.APPIUM_CONTROL_TOKEN }}
         run: |
           npm install -g appium@next
           appium driver install uiautomator2
