@@ -52,13 +52,23 @@ jobs:
     # 安装 Android SDK
     - name: Setup Android SDK
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.setup_appium }}
-      uses: android-actions/setup-android@v3
-      with:
-        cmdline-tools-version: '9477386'
-        packages: |
-          platform-tools
-          build-tools;33.0.0
-          platforms;android-33
+      run: |
+        # 下载并安装 Command Line Tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        unzip commandlinetools-linux-9477386_latest.zip
+        sudo mkdir -p /usr/local/lib/android/sdk/cmdline-tools/
+        sudo mv cmdline-tools /usr/local/lib/android/sdk/cmdline-tools/latest
+
+        # 设置环境变量
+        export ANDROID_HOME=/usr/local/lib/android/sdk
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+        # 接受许可
+        yes | sdkmanager --licenses
+
+        # 安装必要的包
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
     # 安装 Appium 和依赖
     - name: Setup Appium Environment
@@ -81,6 +91,7 @@ jobs:
         echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
         echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
         echo "/usr/local/lib/android/sdk/platform-tools" >> $GITHUB_PATH
+        echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
         # 安装 Appium 和插件
         npm install -g appium@next
