@@ -81,17 +81,10 @@ app.get('/config', function (req, res) {
 app.get(`${basePath}/report`, function (req, res) {
   const reportDir = path.join(__dirname, 'frontend/report');
   
-  fs.readdir(reportDir, (err, files) => {
-    if (err) {
-      return res.json({
-        code: 500,
-        message: '读取报告目录失败',
-        data: []
-      });
-    }
-
+  try {
+    const files = fs.readdirSync(reportDir);
     const reports = files
-      .filter(file => file.endsWith('.html'))
+      .filter(file => file.endsWith('.html') && !file.includes('static'))
       .map(file => {
         // 使用正则表达式匹配文件名中的日期
         const dateMatch = file.match(/(\d{4}-\d{2}-\d{2})/);
@@ -99,7 +92,8 @@ app.get(`${basePath}/report`, function (req, res) {
         
         return {
           name: file,
-          date: date
+          date: date,
+          path: `${basePath}/report/${file}`
         };
       });
 
@@ -108,7 +102,14 @@ app.get(`${basePath}/report`, function (req, res) {
       message: 'success',
       data: reports
     });
-  });
+  } catch (err) {
+    console.error('读取报告目录失败:', err);
+    res.json({
+      code: 500,
+      message: '读取报告目录失败',
+      data: []
+    });
+  }
 });
 
 // 直接访问报告文件
