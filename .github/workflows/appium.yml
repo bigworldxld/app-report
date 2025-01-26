@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload Appium logs
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: appium-logs
           path: appium.log 
