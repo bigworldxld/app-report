@@ -143,27 +143,23 @@
         
         // 从接口获取报告列表
         function fetchReports() {
-            $.ajax({
-                url: '/app-report/report',
-                method: 'GET',
-                success: function(data) {
+            fetch(`${basePath}/report`)
+                .then(response => response.json())
+                .then(data => {
                     if (data.code === 200) {
                         const reports = data.data;
                         updateReportStats(reports);
                         renderReports(reports);
                     } else {
                         console.error('获取报告列表失败:', data.message);
-                        $('#reportList').html(
-                            `<div class="no-results">获取报告列表失败: ${data.message}</div>`
-                        );
+                        document.getElementById('reportList').innerHTML = 
+                            `<div class="no-results">获取报告列表失败: ${data.message}</div>`;
                     }
-                },
-                error: function(xhr, status, error) {
+                })
+                .catch(error => {
                     console.error('请求失败:', error);
-                    $('#reportList').html(
-                        '<div class="no-results">获取报告列表失败，请稍后重试</div>'
-                    );
-                }
+                    document.getElementById('reportList').innerHTML = 
+                        '<div class="no-results">获取报告列表失败，请稍后重试</div>';
                 });
         }
 
@@ -194,7 +190,7 @@
                 const colLeft = $('<div>').addClass('col-md-8');
                 const h4 = $('<h4>');
                 const link = $('<a>')
-                    .attr('href', report.path)
+                    .attr('href', reportPath)
                     .attr('target', '_blank')
                     .text(report.name.replace(/_/g, ' ').replace('.html', ''));
 
@@ -213,23 +209,19 @@
         }
 
         // 搜索功能
-        $('#searchInput').on('input', function() {
-            const searchTerm = $(this).val().toLowerCase();
-            $.ajax({
-                url: '/app-report/report',
-                method: 'GET',
-                success: function(data) {
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            fetch(`${basePath}/report`)
+                .then(response => response.json())
+                .then(data => {
                     if (data.code === 200) {
                         const filteredReports = data.data.filter(report => 
                             report.name.toLowerCase().includes(searchTerm)
                         );
                         renderReports(filteredReports);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('搜索失败:', error);
-                }
-            });
+                })
+                .catch(error => console.error('搜索失败:', error));
         });
 
         // 更新时间的函数
