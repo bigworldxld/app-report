@@ -24,36 +24,82 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        run: |
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip
-          sudo mkdir -p /usr/local/lib/android/sdk/cmdline-tools/
-          sudo mv cmdline-tools /usr/local/lib/android/sdk/cmdline-tools/latest
+      - name: Cache Android SDK
+        uses: actions/cache@v3
+        with:
+          path: |
+            /usr/local/lib/android/sdk
+            ~/.android
+          key: android-sdk-${{ hashFiles('**/build.gradle') }}
+          restore-keys: |
+            android-sdk-
 
-      - name: Set up environment
+      - name: Cache Appium
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            /usr/local/lib/node_modules
+          key: appium-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            appium-
+
+      - name: Get IP Address
+        id: ip
         run: |
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-          export PATH=$PATH:$ANDROID_HOME/platform-tools
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+          IP=$(curl -s ifconfig.me)
+          echo "IP_ADDRESS=$IP" >> $GITHUB_ENV
+          echo "::set-output name=ip::$IP"
 
       - name: Start Appium Server
         if: github.event.inputs.action == 'start'
         run: |
-          npm install -g appium@next
-          appium driver install uiautomator2
-          appium plugin install images
-          appium plugin install --source=npm appium-ocr-plugin
+          if ! command -v appium &> /dev/null; then
+            echo "Installing Appium and dependencies..."
+            npm install -g appium@next
+            appium driver install uiautomator2
+            appium plugin install images
+            appium plugin install --source=npm appium-ocr-plugin
+          fi
+
+          echo "Starting Appium server..."
           nohup appium --use-plugins=images,ocr --allow-cors --config ./config/.appiumrc.json > appium.log 2>&1 &
-          echo "Appium server started"
+          sleep 5  # 等待服务器启动
+
+          # 检查服务器是否成功启动
+          if pgrep -f appium > /dev/null; then
+            echo "Appium server started successfully"
+            echo "Server IP: ${{ env.IP_ADDRESS }}"
+            echo "Server logs:"
+            tail -n 20 appium.log
+            
+            # 创建状态文件
+            echo "{\"status\":\"running\",\"ip\":\"${{ env.IP_ADDRESS }}\",\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}" > server-status.json
+          else
+            echo "Failed to start Appium server"
+            cat appium.log
+            exit 1
+          fi
 
       - name: Stop Appium Server
         if: github.event.inputs.action == 'stop'
         run: |
-          pkill -f appium || true
-          echo "Appium server stopped"
+          if pgrep -f appium > /dev/null; then
+            echo "Stopping Appium server..."
+            pkill -f appium
+            echo "Appium server stopped"
+            
+            # 更新状态文件
+            echo "{\"status\":\"stopped\",\"ip\":\"${{ env.IP_ADDRESS }}\",\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}" > server-status.json
+          else
+            echo "Appium server is not running"
+          fi
+
+      - name: Upload server status
+        uses: actions/upload-artifact@v2
+        with:
+          name: server-status
+          path: server-status.json
 
       - name: Upload Appium logs
         if: always()
