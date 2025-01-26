@@ -40,27 +40,27 @@ jobs:
             exit 1
           fi
           
-          # 创建配置目录
-          mkdir -p ~/.ngrok2
+          # 创建配置目录（使用新的 XDG 路径）
+          mkdir -p ~/.config/ngrok
           
           # 写入配置文件
-          cat > ~/.ngrok2/ngrok.yml << EOF
+          cat > ~/.config/ngrok/ngrok.yml << EOF
           version: 2
           authtoken: $NGROK_AUTH_TOKEN
           region: ap
           web_addr: localhost:4040
           tunnels:
             appium:
-              proto: http
               addr: 4723
-              bind_tls: true
+              proto: http
+              schemes:
+                - https
               inspect: false
-              basic_auth: []
           EOF
           
           # 验证配置
           echo "Current ngrok config:"
-          cat ~/.ngrok2/ngrok.yml
+          cat ~/.config/ngrok/ngrok.yml
           
           # 验证安装
           ngrok --version
@@ -83,7 +83,7 @@ jobs:
             
             # 启动 ngrok HTTP 隧道
             echo "Starting ngrok tunnel..."
-            nohup ngrok http --log=stdout 4723 > ngrok.log 2>&1 &
+            nohup ngrok start appium > ngrok.log 2>&1 &
             sleep 10  # 给 ngrok 更多启动时间
 
             # 等待 ngrok API 可用并重试几次
