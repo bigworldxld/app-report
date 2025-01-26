@@ -46,18 +46,31 @@ jobs:
           npm install -g ngrok
           echo "Installing ngrok..."
           
-          # 正确配置 authtoken
-          ngrok config add-authtoken "$NGROK_AUTH_TOKEN"
+          # 验证 token 是否存在
+          if [ -z "$NGROK_AUTH_TOKEN" ]; then
+            echo "Error: NGROK_AUTH_TOKEN is not set"
+            exit 1
+          fi
+          
+          # 创建配置目录
+          mkdir -p ~/.ngrok2
+          
+          # 写入配置文件
+          cat > ~/.ngrok2/ngrok.yml << EOF
+          authtoken: $NGROK_AUTH_TOKEN
+          region: ap
+          console_ui: true
+          log_level: info
+          EOF
+          
+          # 验证配置
+          cat ~/.ngrok2/ngrok.yml
           
           # 验证安装
           ngrok --version
           
-          # 创建基本配置文件
-          mkdir -p ~/.ngrok2
-          echo "authtoken: $NGROK_AUTH_TOKEN" > ~/.ngrok2/ngrok.yml
-          echo "region: ap" >> ~/.ngrok2/ngrok.yml
-          echo "console_ui: true" >> ~/.ngrok2/ngrok.yml
-          echo "log_level: info" >> ~/.ngrok2/ngrok.yml
+          # 测试认证
+          ngrok verify
 
       - name: Start Appium Server
         if: github.event.inputs.action == 'start'

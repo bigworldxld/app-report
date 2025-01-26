@@ -68,3 +68,6 @@ coverage.xml
 !frontend/report/static/
 !frontend/report/static/*
 
+.env
+~/.ngrok2/
+
