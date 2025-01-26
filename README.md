@@ -51,6 +51,26 @@ e. 在 "Workflow permissions" 部分：
 选择 "Read and write permissions"
 勾选 "Allow GitHub Actions to create and approve pull requests"
 f. 点击 "Save" 保存更改
+
+## 添加token
+1. 登录 GitHub
+2. 点击右上角头像 -> Settings
+3. 滚动到底部，点击左侧菜单 "Developer settings"
+4. 点击左侧菜单 "Personal access tokens" -> "Tokens (classic)"
+5. 点击 "Generate new token" -> "Generate new token (classic)"
+6. 设置 Token：
++ Note: 填写描述，如 "Appium Control Token"
++ Expiration: 选择过期时间，建议选择 "No expiration"
++ 勾选以下权限：repo (完整的仓库访问权限)workflow (允许管理 GitHub Actions 工作流)
++ 点击 "Generate token"
+立即复制生成的 token（这是唯一一次看到完整 token 的机会）
+将 Token 添加到仓库的 Secrets：
+7. 进入你的仓库
++ 点击 "Settings" 标签
++ 点击左侧 "Secrets and variables" -> "Actions"
++ 点击 "New repository secret"
++ 添加 secret：Name: APPIUM_CONTROL_TOKEN；Value: 粘贴刚才复制的 token
++ 点击 "Add secret"
 ## workflow中安装appium
 添加了手动触发时的输入选项 setup_appium
 使用条件语句 if: ${{ github.event_name == 'workflow_dispatch' && inputs.setup_appium }} 控制 Appium 相关步骤的执行

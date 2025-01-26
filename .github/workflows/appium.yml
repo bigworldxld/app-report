@@ -63,7 +63,7 @@ jobs:
           fi
 
           echo "Starting Appium server..."
-          nohup appium --use-plugins=images,ocr --allow-cors --config ./config/.appiumrc.json > appium.log 2>&1 &
+          nohup appium --allow-cors --config ./config/.appiumrc.json > appium.log 2>&1 &
           sleep 5  # 等待服务器启动
 
           # 检查服务器是否成功启动

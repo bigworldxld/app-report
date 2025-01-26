@@ -1,9 +1,0 @@
-# 报告图片生成的文件夹名
-#report_imges_relatve_dir: images2
-report_imges_relatve_dir: ${IMAGES}
-# 报告图片存放的文件夹路径
-#getImage_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/images2
-getImage_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/${IMAGES}
-#运行前删除报告图片文件夹下所有图片
-#del_Image_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/images2
-del_Image_dicrectory: /Users/v_xulindu/PycharmProjects/mytest/selfpage/report/${IMAGES}
