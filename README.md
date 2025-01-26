@@ -52,4 +52,4 @@ e. 在 "Workflow permissions" 部分：
 勾选 "Allow GitHub Actions to create and approve pull requests"
 f. 点击 "Save" 保存更改
 
-find frontend/report -name '*.html' -exec cp {} build/report/ \\;
+find frontend/report -name '*.html' -exec cp {} build/frontend/report/ \\;

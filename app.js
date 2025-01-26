@@ -7,6 +7,8 @@ var os = require('os');
 var { spawn, exec } = require('child_process');
 var net = require('net');
 const basePath = '/app-report';  // GitHub Pages 项目名称
+// var router = require('./scripts/router');
+
 
 // 存储已添加的静态资源路径
 let addedStaticPaths = new Set();
@@ -78,8 +80,8 @@ app.get('/config', function (req, res) {
 })
 
 // 添加静态文件路由
-app.use('/app-report/report', express.static(path.join(__dirname, 'frontend/report')));
-app.use('/app-report/report/static', express.static(path.join(__dirname, 'frontend/report/static')));
+// app.use('/app-report/report', express.static(path.join(__dirname, 'frontend/report')));
+// app.use('/app-report/report/static', express.static(path.join(__dirname, 'frontend/report/static')));
 
 // 获取所有报告文件列表
 app.get(`${basePath}/report/report-list.json`, function (req, res) {
