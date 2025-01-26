@@ -47,12 +47,18 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: '17'
 
     # 安装 Android SDK
     - name: Setup Android SDK
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.setup_appium }}
       uses: android-actions/setup-android@v3
+      with:
+        cmdline-tools-version: '9477386'
+        packages: |
+          platform-tools
+          build-tools;33.0.0
+          platforms;android-33
 
     # 安装 Appium 和依赖
     - name: Setup Appium Environment
@@ -70,6 +76,11 @@ jobs:
           pkg-config \
           python3-pip \
           wget
+
+        # 设置 ANDROID_HOME 环境变量
+        echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+        echo "/usr/local/lib/android/sdk/platform-tools" >> $GITHUB_PATH
 
         # 安装 Appium 和插件
         npm install -g appium@next

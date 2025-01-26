@@ -51,10 +51,27 @@ e. 在 "Workflow permissions" 部分：
 选择 "Read and write permissions"
 勾选 "Allow GitHub Actions to create and approve pull requests"
 f. 点击 "Save" 保存更改
-
+## workflow中安装appium
+添加了手动触发时的输入选项 setup_appium
+使用条件语句 if: ${{ github.event_name == 'workflow_dispatch' && inputs.setup_appium }} 控制 Appium 相关步骤的执行
+添加了完整的环境依赖安装：
+Java 环境
+Android SDK
+基础系统工具
+Appium 及其驱动和插件
+使用方法：
+定时任务和普通推送只执行基本的构建和部署
+当需要设置 Appium 环境时：
+在 GitHub Actions 页面手动触发工作流
+勾选 "Setup Appium Environment" 选项
+工作流将执行完整的环境安装
+这样可以：[参考：GitHub Actions Manual Triggers](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow)
+保持定时任务的轻量和高效
+需要时可以手动安装完整的 Appium 环境
+避免不必要的资源消耗
+## 其他依赖
 find frontend/report -name '*.html' -exec cp {} build/frontend/report/ \\;
-
-    // "appium": "^2.0.0",
-    // "@appium/images-plugin": "^2.1.0",
-    // "appium-ocr-plugin": "^1.0.0",
-    // "tesseract.js": "^4.1.1"
+// "appium": "^2.0.0",
+// "@appium/images-plugin": "^2.1.0",
+// "appium-ocr-plugin": "^1.0.0",
+// "tesseract.js": "^4.1.1"
