@@ -53,7 +53,9 @@ jobs:
             appium:
               proto: http
               addr: 4723
+              bind_tls: true
               inspect: false
+              basic_auth: []
           EOF
           
           # 验证配置
@@ -62,12 +64,6 @@ jobs:
           
           # 验证安装
           ngrok --version
-          
-          # 升级配置文件格式
-          ngrok config upgrade
-          
-          # 测试认证
-          ngrok verify
 
       - name: Start Appium Server
         if: github.event.inputs.action == 'start'
@@ -87,7 +83,7 @@ jobs:
             
             # 启动 ngrok HTTP 隧道
             echo "Starting ngrok tunnel..."
-            nohup ngrok start appium > ngrok.log 2>&1 &
+            nohup ngrok http --log=stdout 4723 > ngrok.log 2>&1 &
             sleep 10  # 给 ngrok 更多启动时间
 
             # 等待 ngrok API 可用并重试几次
