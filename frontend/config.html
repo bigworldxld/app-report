@@ -22,41 +22,37 @@
             padding: 5px;
             border-bottom: 1px solid #eee;
         }
-        .status-running {
-            color: #28a745;
-        }
-        .status-stopped {
-            color: #dc3545;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Appium 服务器控制面板</h2>
+        
         <div class="row mt-4">
             <div class="col-md-12">
-                <button id="toggleButton" class="btn btn-primary">
+                <button id="startButton" class="btn btn-success">
                     启动 Appium 服务器
                 </button>
-                <span id="statusText" class="ml-3 status-stopped">
-                    当前状态：已停止
-                </span>
+                <button id="stopButton" class="btn btn-danger ml-2">
+                    停止 Appium 服务器
+                </button>
             </div>
         </div>
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <div id="logArea">
-                    <div class="log-entry">等待操作...</div>
-                </div>
-            </div>
+
+        <div id="logArea" class="mt-4">
+            <div class="log-entry">等待操作...</div>
+        </div>
+
+        <div class="mt-4">
+            <a href="/app-report" class="btn btn-primary">返回首页</a>
         </div>
     </div>
 
     <script src="/app-report/report/static/jquery.min.js"></script>
     <script>
-        let isRunning = false;
-        let logPollingInterval;
-        const basePath = '/app-report';
+        const GITHUB_TOKEN = 'XLD_TOKEN'; // 需要替换为实际的 token
+        const REPO_OWNER = 'bigworldxld';
+        const REPO_NAME = 'app-report';
 
         function addLog(message) {
             const logEntry = $('<div class="log-entry"></div>').text(
@@ -66,39 +62,43 @@
             $('#logArea').scrollTop($('#logArea')[0].scrollHeight);
         }
 
-        function updateStatus(running) {
-            isRunning = running;
-            const $button = $('#toggleButton');
-            const $status = $('#statusText');
+        function triggerWorkflow(action) {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/appium.yml/dispatches`;
             
-            if (running) {
-                $button.text('停止 Appium 服务器');
-                $button.removeClass('btn-primary').addClass('btn-danger');
-                $status.text('当前状态：运行中');
-                $status.removeClass('status-stopped').addClass('status-running');
-            } else {
-                $button.text('启动 Appium 服务器');
-                $button.removeClass('btn-danger').addClass('btn-primary');
-                $status.text('当前状态：已停止');
-                $status.removeClass('status-running').addClass('status-stopped');
-            }
-        }
-
-        $('#toggleButton').click(function() {
-            const action = isRunning ? 'stop' : 'start';
-            
-            $.get(`${basePath}/api/appium/${action}`)
-                .done(function(response) {
-                    if (response.status === 'success') {
-                        updateStatus(!isRunning);
-                        addLog(response.message);
-                    } else {
-                        addLog(`错误: ${response.message}`);
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ref: 'main',
+                    inputs: {
+                        action: action
                     }
                 })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    addLog(`请求失败: ${textStatus}`);
-                });
+            });
+        }
+
+        $('#startButton').click(async function() {
+            try {
+                addLog('正在启动 Appium 服务器...');
+                await triggerWorkflow('start');
+                addLog('已触发启动工作流，请等待几分钟...');
+            } catch (error) {
+                addLog(`错误: ${error.message}`);
+            }
+        });
+
+        $('#stopButton').click(async function() {
+            try {
+                addLog('正在停止 Appium 服务器...');
+                await triggerWorkflow('stop');
+                addLog('已触发停止工作流，请等待几分钟...');
+            } catch (error) {
+                addLog(`错误: ${error.message}`);
+            }
         });
     </script>
 </body>

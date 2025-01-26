@@ -75,14 +75,13 @@ app.get('/', function (req, res) {
    res.sendFile(__dirname+"/frontend/index.html");
 })
 
-app.get('/config', function (req, res) {
+app.get('/config_github', function (req, res) {
   res.sendFile(__dirname+"/frontend/config.html");
 })
-
-// 添加静态文件路由
-// app.use('/app-report/report', express.static(path.join(__dirname, 'frontend/report')));
-// app.use('/app-report/report/static', express.static(path.join(__dirname, 'frontend/report/static')));
-
+app.get('/config_local', function (req, res) {
+    res.sendFile(__dirname+"/frontend/config-local.html");
+  })
+  
 // 获取所有报告文件列表
 app.get(`${basePath}/report/report-list.json`, function (req, res) {
   const reportDir = path.join(__dirname, 'frontend/report');

@@ -1,0 +1,63 @@
+name: Appium Server Control
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform (start/stop)'
+        required: true
+        type: choice
+        options:
+          - start
+          - stop
+
+jobs:
+  control-appium:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        run: |
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip commandlinetools-linux-9477386_latest.zip
+          sudo mkdir -p /usr/local/lib/android/sdk/cmdline-tools/
+          sudo mv cmdline-tools /usr/local/lib/android/sdk/cmdline-tools/latest
+
+      - name: Set up environment
+        run: |
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+          export PATH=$PATH:$ANDROID_HOME/platform-tools
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+
+      - name: Start Appium Server
+        if: github.event.inputs.action == 'start'
+        run: |
+          npm install -g appium@next
+          appium driver install uiautomator2
+          appium plugin install images
+          appium plugin install --source=npm appium-ocr-plugin
+          nohup appium --use-plugins=images,ocr --allow-cors --config ./config/.appiumrc.json > appium.log 2>&1 &
+          echo "Appium server started"
+
+      - name: Stop Appium Server
+        if: github.event.inputs.action == 'stop'
+        run: |
+          pkill -f appium || true
+          echo "Appium server stopped"
+
+      - name: Upload Appium logs
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: appium-logs
+          path: appium.log 
