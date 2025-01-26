@@ -75,7 +75,7 @@ app.get('/', function (req, res) {
    res.sendFile(__dirname+"/frontend/index.html");
 })
 
-app.get('/config_github', function (req, res) {
+app.get('/config', function (req, res) {
   res.sendFile(__dirname+"/frontend/config.html");
 })
 app.get('/config_local', function (req, res) {

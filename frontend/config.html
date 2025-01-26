@@ -103,7 +103,10 @@
                     const statusData = await statusResponse.json();
                     
                     addLog(`服务器状态: ${statusData.status}`);
-                    addLog(`服务器 IP: ${statusData.ip}`);
+                    if (statusData.ngrok_url) {
+                        addLog(`服务器地址: ${statusData.ngrok_url}`);
+                        addLog('请使用此地址连接 Appium 服务器');
+                    }
                     addLog(`最后更新时间: ${new Date(statusData.timestamp).toLocaleString()}`);
                 }
             } catch (error) {
