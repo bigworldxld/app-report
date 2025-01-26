@@ -31,10 +31,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
+      with:
+        lfs: true
 
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
@@ -116,19 +118,16 @@ jobs:
         # 替换 token 占位符
         sed -i "s|{{ APPIUM_CONTROL_TOKEN }}|${APPIUM_CONTROL_TOKEN}|g" frontend/config.html
         npm run build
-        # 将 index.html 复制到根目录
-        cp build/frontend/index.html build/frontend/404.html
-        cp build/frontend/index.html build/frontend/README.md
-        ls -la build/frontend/
+        ls -la build/frontend/report/
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v2
       with:
         path: './build/frontend'
 
     - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
       id: deployment
+      uses: actions/deploy-pages@v2

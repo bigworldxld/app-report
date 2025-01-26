@@ -14,15 +14,12 @@ on:
 jobs:
   control-appium:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -44,8 +41,6 @@ jobs:
 
       - name: Start Appium Server
         if: github.event.inputs.action == 'start'
-        env:
-          GITHUB_TOKEN: ${{ secrets.APPIUM_CONTROL_TOKEN }}
         run: |
           npm install -g appium@next
           appium driver install uiautomator2
@@ -62,8 +57,7 @@ jobs:
 
       - name: Upload Appium logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: appium-logs
-          path: appium.log
-          retention-days: 5  # 设置保留时间 
+          path: appium.log 
