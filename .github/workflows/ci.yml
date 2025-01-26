@@ -116,7 +116,10 @@ jobs:
         # 替换 token 占位符
         sed -i "s|{{ APPIUM_CONTROL_TOKEN }}|${APPIUM_CONTROL_TOKEN}|g" frontend/config.html
         npm run build
-        ls -la build/frontend/report/
+        # 将 index.html 复制到根目录
+        cp build/frontend/index.html build/frontend/404.html
+        cp build/frontend/index.html build/frontend/README.md
+        ls -la build/frontend/
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
