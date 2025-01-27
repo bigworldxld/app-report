@@ -5,9 +5,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  schedule:
+  # schedule:
     # 每30分钟执行一次
-    - cron: '*/30 * * * *'
+    # - cron: '*/30 * * * *'
   # 允许手动触发
   workflow_dispatch:
     inputs:
