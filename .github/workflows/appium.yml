@@ -52,9 +52,7 @@ jobs:
           tunnels:
             appium:
               addr: 4723
-              proto: http
-              schemes:
-                - https
+              proto: tcp  # 修改为 TCP 协议
               inspect: false
           EOF
           
@@ -75,61 +73,75 @@ jobs:
           appium plugin install --source=npm appium-ocr-plugin
 
           echo "Starting Appium server..."
-          nohup appium --allow-cors --address 0.0.0.0 --config ./config/.appiumrc.json > appium.log 2>&1 &
+          nohup appium --allow-cors --address 0.0.0.0 --port 4723 --use-plugins=images,ocr > appium.log 2>&1 &
           sleep 5  # 等待服务器启动
 
-          if pgrep -f appium > /dev/null; then
-            echo "Appium server started successfully"
-            
-            # 启动 ngrok HTTP 隧道
-            echo "Starting ngrok tunnel..."
-            nohup ngrok start appium > ngrok.log 2>&1 &
-            sleep 10  # 给 ngrok 更多启动时间
-
-            # 等待 ngrok API 可用并重试几次
-            MAX_RETRIES=30
-            for i in $(seq 1 $MAX_RETRIES); do
-              echo "Attempt $i/$MAX_RETRIES to get ngrok URL..."
-              
-              if curl -s http://localhost:4040/api/tunnels | grep -q "public_url"; then
-                NGROK_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-                if [ ! -z "$NGROK_URL" ]; then
-                  echo "Successfully got ngrok URL: $NGROK_URL"
-                  break
-                fi
-              fi
-              
-              if [ $i -eq $MAX_RETRIES ]; then
-                echo "Failed to get ngrok URL after $MAX_RETRIES attempts"
-                echo "ngrok logs:"
-                cat ngrok.log
-                exit 1
-              fi
-              
-              echo "Waiting for ngrok to start... ($i/$MAX_RETRIES)"
-              sleep 2
-            done
-            
-            echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
-            
-            # 创建状态文件，添加更多信息
-            echo "{
-              \"status\": \"running\",
-              \"ngrok_url\": \"$NGROK_URL\",
-              \"local_url\": \"http://localhost:4723\",
-              \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
-              \"run_id\": \"${GITHUB_RUN_ID}\"
-            }" > server-status.json
-            
-            echo "Server URL: $NGROK_URL"
-            echo "Local URL: http://localhost:4723"
-            echo "Server logs:"
-            tail -n 20 appium.log
-          else
-            echo "Failed to start Appium server"
+          # 检查 Appium Server 是否正在运行
+          if ! pgrep -f appium > /dev/null; then
+            echo "Error: Appium server failed to start"
             cat appium.log
             exit 1
           fi
+
+          # 检查端口是否已监听
+          if ! netstat -tuln | grep 4723 > /dev/null; then
+            echo "Error: Appium server is not listening on port 4723"
+            exit 1
+          fi
+
+          echo "Appium server started successfully"
+          
+          # 启动 ngrok TCP 隧道
+          echo "Starting ngrok tunnel..."
+          nohup ngrok tcp 4723 > ngrok.log 2>&1 &
+          sleep 10  # 给 ngrok 更多启动时间
+
+          # 检查 ngrok 是否正在运行
+          if ! pgrep -f ngrok > /dev/null; then
+            echo "Error: ngrok failed to start"
+            cat ngrok.log
+            exit 1
+          fi
+
+          # 获取 ngrok URL
+          MAX_RETRIES=30
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i/$MAX_RETRIES to get ngrok URL..."
+            
+            if curl -s http://localhost:4040/api/tunnels > /dev/null; then
+              NGROK_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[] | select(.proto == "tcp") | .public_url')
+              if [ ! -z "$NGROK_URL" ]; then
+                echo "Successfully got ngrok URL: $NGROK_URL"
+                break
+              fi
+            fi
+            
+            if [ $i -eq $MAX_RETRIES ]; then
+              echo "Failed to get ngrok URL after $MAX_RETRIES attempts"
+              echo "ngrok logs:"
+              cat ngrok.log
+              exit 1
+            fi
+            
+            echo "Waiting for ngrok to start... ($i/$MAX_RETRIES)"
+            sleep 2
+          done
+          
+          echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
+          
+          # 创建状态文件
+          echo "{
+            \"status\": \"running\",
+            \"ngrok_url\": \"$NGROK_URL\",
+            \"local_url\": \"http://localhost:4723\",
+            \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
+            \"run_id\": \"${GITHUB_RUN_ID}\"
+          }" > server-status.json
+          
+          echo "Server URL: $NGROK_URL"
+          echo "Local URL: http://localhost:4723"
+          echo "Server logs:"
+          tail -n 20 appium.log
 
       - name: Stop Appium Server
         if: github.event.inputs.action == 'stop'
@@ -166,4 +178,4 @@ jobs:
           path: |
             appium.log
             ngrok.log
-          retention-days: 1 
+          retention-days: 1
